@@ -1,0 +1,35 @@
+network_account_id = "<network-account-id>"
+gcp_project_id     = "<gcp-project-id>"
+
+# Leave null to use your current AWS CLI credentials directly.
+# Set this only when your credentials can assume that role.
+aws_assume_role_arn = "arn:aws:iam::<network-account-id>:role/LandingZoneDeployRole"
+
+# Leave null to use gcloud Application Default Credentials.
+# Example: "C:/Users/you/.config/gcloud/application_default_credentials.json"
+gcp_credentials_file = null
+
+aws_region         = "us-east-1"
+gcp_region         = "us-central1"
+name_prefix        = "aws-gcp-vpn"
+gcp_network        = "default"
+
+aws_allowed_source_cidrs = [
+  "10.0.0.0/16",
+  "10.10.0.0/16",
+  "10.30.0.0/16"
+]
+
+gcp_advertised_cidrs = [
+  "10.128.0.0/20"
+]
+
+aws_bgp_asn = 64512
+gcp_bgp_asn = 65001
+
+tunnel_psks = {
+  if0_tunnel1 = "CHANGE_ME"
+  if0_tunnel2 = "CHANGE_ME"
+  if1_tunnel1 = "CHANGE_ME"
+  if1_tunnel2 = "CHANGE_ME"
+}

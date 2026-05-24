@@ -1,0 +1,16 @@
+region = "us-east-1"
+
+network_account_id         = "444444444444"
+shared_services_account_id = "555555555555"
+dev_account_id             = "666666666666"
+test_account_id            = ""
+prod_account_id            = "888888888888"
+
+deploy_role_name = "LandingZoneDeployRole"
+
+# Phase 1 defaults:
+# Network: 10.0.0.0/16
+# Shared Services: 10.1.0.0/16
+# Dev: 10.10.0.0/16
+# Prod: 10.30.0.0/16
+# Data reserved, not deployed: 10.6.0.0/16

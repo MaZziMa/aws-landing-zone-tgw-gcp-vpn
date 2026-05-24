@@ -1,0 +1,5 @@
+security_ou_id       = "ou-iafi-vqsofnv7"
+infrastructure_ou_id = "ou-iafi-zvkhx8ih"
+workloads_ou_id      = "ou-iafi-jv73hh4i"
+nonprod_ou_id        = "ou-iafi-j782cz7j"
+prod_ou_id           = "ou-iafi-gg9aos9k"

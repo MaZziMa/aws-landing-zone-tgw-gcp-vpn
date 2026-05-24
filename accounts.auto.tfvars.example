@@ -1,0 +1,12 @@
+region = "us-east-1"
+
+management_account_id      = "111111111111"
+security_account_id        = "222222222222"
+log_archive_account_id     = "333333333333"
+network_account_id         = "444444444444"
+shared_services_account_id = "555555555555"
+dev_account_id             = "666666666666"
+test_account_id            = "777777777777"
+prod_account_id            = "888888888888"
+
+deploy_role_name = "LandingZoneDeployRole"

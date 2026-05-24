@@ -1,0 +1,5 @@
+region = "us-east-1"
+
+prod_account_id    = "888888888888"
+network_account_id = "444444444444"
+deploy_role_name   = "LandingZoneDeployRole"

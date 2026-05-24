@@ -1,0 +1,9 @@
+region = "us-east-1"
+
+shared_services_account_id = "555555555555"
+network_account_id         = "444444444444"
+deploy_role_name           = "LandingZoneDeployRole"
+
+transit_gateway_id    = "tgw-replace"
+nonprod_route_table_id = "tgw-rtb-replace"
+egress_route_table_id  = "tgw-rtb-replace"

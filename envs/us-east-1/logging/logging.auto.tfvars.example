@@ -1,0 +1,8 @@
+region = "us-east-1"
+
+management_account_id  = "111111111111"
+log_archive_account_id = "333333333333"
+deploy_role_name       = "LandingZoneDeployRole"
+
+organization_id = "o-replace"
+log_bucket_name = "replace-with-globally-unique-log-bucket-name"
