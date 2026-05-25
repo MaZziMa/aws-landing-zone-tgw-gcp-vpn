@@ -37,3 +37,23 @@ variable "vpc_cidr" {
   type    = string
   default = "10.20.0.0/16"
 }
+
+variable "web_subnet_cidrs" {
+  type    = list(string)
+  default = ["10.20.0.0/24", "10.20.1.0/24"]
+}
+
+variable "app_subnet_cidrs" {
+  type    = list(string)
+  default = ["10.20.10.0/24", "10.20.11.0/24"]
+}
+
+variable "data_subnet_cidrs" {
+  type    = list(string)
+  default = ["10.20.20.0/24", "10.20.21.0/24"]
+}
+
+variable "tgw_subnet_cidrs" {
+  type    = list(string)
+  default = ["10.20.30.0/28", "10.20.30.16/28"]
+}

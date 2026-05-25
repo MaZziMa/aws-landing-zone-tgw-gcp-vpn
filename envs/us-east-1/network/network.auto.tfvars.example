@@ -8,9 +8,21 @@ prod_account_id            = "888888888888"
 
 deploy_role_name = "LandingZoneDeployRole"
 
-# Phase 1 defaults:
-# Network: 10.0.0.0/16
-# Shared Services: 10.1.0.0/16
-# Dev: 10.10.0.0/16
-# Prod: 10.30.0.0/16
-# Data reserved, not deployed: 10.6.0.0/16
+network_vpc_cidr         = "10.0.0.0/16"
+shared_services_vpc_cidr = "10.1.0.0/16"
+dev_vpc_cidr             = "10.10.0.0/16"
+test_vpc_cidr            = "10.20.0.0/16"
+prod_vpc_cidr            = "10.30.0.0/16"
+data_vpc_cidr            = "10.6.0.0/16"
+
+azs = ["us-east-1a", "us-east-1b"]
+
+egress_public_subnet_cidrs = [
+  "10.0.0.0/24",
+  "10.0.1.0/24"
+]
+
+egress_tgw_subnet_cidrs = [
+  "10.0.10.0/28",
+  "10.0.10.16/28"
+]

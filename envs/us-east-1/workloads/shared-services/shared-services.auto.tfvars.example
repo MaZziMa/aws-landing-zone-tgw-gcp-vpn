@@ -7,3 +7,26 @@ deploy_role_name           = "LandingZoneDeployRole"
 transit_gateway_id    = "tgw-replace"
 nonprod_route_table_id = "tgw-rtb-replace"
 egress_route_table_id  = "tgw-rtb-replace"
+
+vpc_cidr = "10.1.0.0/16"
+azs      = ["us-east-1a", "us-east-1b"]
+
+web_subnet_cidrs = [
+  "10.1.0.0/24",
+  "10.1.1.0/24"
+]
+
+app_subnet_cidrs = [
+  "10.1.10.0/24",
+  "10.1.11.0/24"
+]
+
+data_subnet_cidrs = [
+  "10.1.20.0/24",
+  "10.1.21.0/24"
+]
+
+tgw_subnet_cidrs = [
+  "10.1.30.0/28",
+  "10.1.30.16/28"
+]

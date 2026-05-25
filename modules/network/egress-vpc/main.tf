@@ -1,3 +1,14 @@
+locals {
+  name_parts = split("-", var.name)
+  cloud      = try(local.name_parts[0], "aws")
+  region     = try(local.name_parts[1], "use1")
+  app        = try(local.name_parts[3], "net")
+  env        = try(local.name_parts[4], "shared")
+
+  public_tier = "plb"
+  tgw_tier    = "tgw"
+}
+
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
@@ -9,7 +20,7 @@ resource "aws_vpc" "this" {
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
-  tags = merge(var.tags, { Name = "${var.name}-igw" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-igw-${local.app}-${local.env}-${local.public_tier}-001" })
 }
 
 resource "aws_subnet" "public" {
@@ -20,7 +31,7 @@ resource "aws_subnet" "public" {
   availability_zone       = var.azs[count.index]
   map_public_ip_on_launch = false
 
-  tags = merge(var.tags, { Name = "${var.name}-public-${count.index + 1}" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-snet-${local.app}-${local.env}-${local.public_tier}-${format("%03d", count.index + 1)}" })
 }
 
 resource "aws_subnet" "tgw" {
@@ -30,7 +41,7 @@ resource "aws_subnet" "tgw" {
   cidr_block        = var.tgw_subnet_cidrs[count.index]
   availability_zone = var.azs[count.index]
 
-  tags = merge(var.tags, { Name = "${var.name}-tgw-${count.index + 1}" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-snet-${local.app}-${local.env}-${local.tgw_tier}-${format("%03d", count.index + 1)}" })
 }
 
 resource "aws_eip" "nat" {
@@ -38,7 +49,7 @@ resource "aws_eip" "nat" {
 
   domain = "vpc"
 
-  tags = merge(var.tags, { Name = "${var.name}-nat-${count.index + 1}" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-eip-${local.app}-${local.env}-${local.public_tier}-${format("%03d", count.index + 1)}" })
 }
 
 resource "aws_nat_gateway" "this" {
@@ -47,7 +58,7 @@ resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
 
-  tags = merge(var.tags, { Name = "${var.name}-nat-${count.index + 1}" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-natgw-${local.app}-${local.env}-${local.public_tier}-${format("%03d", count.index + 1)}" })
 
   depends_on = [aws_internet_gateway.this]
 }
@@ -55,12 +66,13 @@ resource "aws_nat_gateway" "this" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.this.id
-  }
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-rtb-${local.app}-${local.env}-${local.public_tier}-001" })
+}
 
-  tags = merge(var.tags, { Name = "${var.name}-public" })
+resource "aws_route" "public_default_to_igw" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.this.id
 }
 
 resource "aws_route" "public_to_workloads" {
@@ -90,7 +102,7 @@ resource "aws_route_table" "tgw" {
     nat_gateway_id = aws_nat_gateway.this[min(count.index, length(aws_nat_gateway.this) - 1)].id
   }
 
-  tags = merge(var.tags, { Name = "${var.name}-tgw-${count.index + 1}" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-rtb-${local.app}-${local.env}-${local.tgw_tier}-${format("%03d", count.index + 1)}" })
 }
 
 resource "aws_route_table_association" "tgw" {
@@ -111,5 +123,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
   transit_gateway_default_route_table_association = false
   transit_gateway_default_route_table_propagation = false
 
-  tags = merge(var.tags, { Name = "${var.name}-tgw-attachment" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-tgwatt-${local.app}-${local.env}-${local.tgw_tier}-001" })
+
+  lifecycle {
+    ignore_changes = [
+      transit_gateway_default_route_table_association,
+      transit_gateway_default_route_table_propagation
+    ]
+  }
 }

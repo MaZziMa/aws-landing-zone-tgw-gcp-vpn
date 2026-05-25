@@ -1,4 +1,10 @@
 locals {
+  cloud_code  = "aws"
+  region_code = "use1"
+  app_code    = "workload"
+  env_code    = "test"
+  vpc_name    = "${local.cloud_code}-${local.region_code}-vpc-${local.app_code}-${local.env_code}-prv-001"
+
   tags = {
     ManagedBy   = "Terraform"
     Project     = "LandingZone"
@@ -9,13 +15,13 @@ locals {
 module "vpc" {
   source = "../../../../modules/network/workload-vpc"
 
-  name               = "test-workload"
+  name               = local.vpc_name
   vpc_cidr           = var.vpc_cidr
   azs                = var.azs
-  web_subnet_cidrs   = ["10.20.0.0/24", "10.20.1.0/24"]
-  app_subnet_cidrs   = ["10.20.10.0/24", "10.20.11.0/24"]
-  data_subnet_cidrs  = ["10.20.20.0/24", "10.20.21.0/24"]
-  tgw_subnet_cidrs   = ["10.20.30.0/28", "10.20.30.16/28"]
+  web_subnet_cidrs   = var.web_subnet_cidrs
+  app_subnet_cidrs   = var.app_subnet_cidrs
+  data_subnet_cidrs  = var.data_subnet_cidrs
+  tgw_subnet_cidrs   = var.tgw_subnet_cidrs
   transit_gateway_id = var.transit_gateway_id
   tags               = local.tags
 }

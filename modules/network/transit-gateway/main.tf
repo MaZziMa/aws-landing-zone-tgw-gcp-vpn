@@ -1,3 +1,11 @@
+locals {
+  name_parts = split("-", var.name)
+  cloud      = try(local.name_parts[0], "aws")
+  region     = try(local.name_parts[1], "use1")
+  app        = try(local.name_parts[3], "net")
+  env        = try(local.name_parts[4], "shared")
+}
+
 resource "aws_ec2_transit_gateway" "this" {
   description                     = var.name
   amazon_side_asn                 = 64512
@@ -13,29 +21,29 @@ resource "aws_ec2_transit_gateway" "this" {
 resource "aws_ec2_transit_gateway_route_table" "egress" {
   transit_gateway_id = aws_ec2_transit_gateway.this.id
 
-  tags = merge(var.tags, { Name = "${var.name}-egress" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-tgwrt-${local.app}-${local.env}-egress-001" })
 }
 
 resource "aws_ec2_transit_gateway_route_table" "prod" {
   transit_gateway_id = aws_ec2_transit_gateway.this.id
 
-  tags = merge(var.tags, { Name = "${var.name}-prod" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-tgwrt-${local.app}-${local.env}-prod-001" })
 }
 
 resource "aws_ec2_transit_gateway_route_table" "nonprod" {
   transit_gateway_id = aws_ec2_transit_gateway.this.id
 
-  tags = merge(var.tags, { Name = "${var.name}-nonprod" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-tgwrt-${local.app}-${local.env}-nonprod-001" })
 }
 
 resource "aws_ec2_transit_gateway_route_table" "vpn" {
   transit_gateway_id = aws_ec2_transit_gateway.this.id
 
-  tags = merge(var.tags, { Name = "${var.name}-vpn" })
+  tags = merge(var.tags, { Name = "${local.cloud}-${local.region}-tgwrt-${local.app}-${local.env}-vpn-001" })
 }
 
 resource "aws_ram_resource_share" "this" {
-  name                      = "${var.name}-share"
+  name                      = "${local.cloud}-${local.region}-ram-${local.app}-${local.env}-prv-001"
   allow_external_principals = false
 
   tags = var.tags

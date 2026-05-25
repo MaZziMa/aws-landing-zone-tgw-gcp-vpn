@@ -8,6 +8,7 @@ Default design:
 - Deployment identity: CI/CD assumes `LandingZoneDeployRole` in each managed account
 - Egress model: centralized NAT-only egress in the Network account
 - Account model: Management, Security, Log Archive, Network, Shared Services, Dev, Test, Prod
+- Naming standard: `<cloud>-<region>-<type>-<app>-<env>-<zone>-<inst>`
 
 ## Account Responsibilities
 
@@ -73,9 +74,19 @@ Recommended order:
 8. `envs/us-east-1/workloads/prod`
 9. `envs/us-east-1/aws-gcp-vpn`
 
-For VPN, apply `network` first to create `vpn_route_table_id`, then re-apply Dev/Prod workloads with that route table ID before applying `envs/us-east-1/aws-gcp-vpn`.
+For VPN, apply `network` first to create `vpn_route_table_id`, then apply Dev/Prod workloads so their attachments propagate into the VPN route table before applying `envs/us-east-1/aws-gcp-vpn`.
+
+Convenience scripts are available from the repository root:
+
+```powershell
+.\scripts\validate.ps1 -Init
+.\scripts\deploy.ps1 -PlanOnly
+.\scripts\deploy.ps1
+```
 
 See `docs/ACCOUNT_DEPLOYMENT_MATRIX.md` for the account-by-account deployment matrix.
+See `docs/HANDOVER_RUNBOOK.md` for operational handover, validation, destroy order, and troubleshooting.
+See `docs/NAMING_CONVENTION.md` for naming rules, examples, exceptions, and rename-risk notes.
 
 ## Centralized Egress Flow
 

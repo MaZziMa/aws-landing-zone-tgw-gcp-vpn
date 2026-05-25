@@ -9,10 +9,9 @@ aws_assume_role_arn = "arn:aws:iam::<network-account-id>:role/LandingZoneDeployR
 # Example: "C:/Users/you/.config/gcloud/application_default_credentials.json"
 gcp_credentials_file = null
 
-aws_region         = "us-east-1"
-gcp_region         = "us-central1"
-name_prefix        = "aws-gcp-vpn"
-gcp_network        = "default"
+aws_region  = "us-east-1"
+gcp_region  = "us-central1"
+gcp_network = "default"
 
 aws_allowed_source_cidrs = [
   "10.0.0.0/16",

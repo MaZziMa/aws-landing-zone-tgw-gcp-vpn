@@ -1,4 +1,12 @@
 locals {
+  cloud_code  = "aws"
+  region_code = "use1"
+  app_code    = "net"
+  env_code    = "shared"
+
+  tgw_name        = "${local.cloud_code}-${local.region_code}-tgw-${local.app_code}-${local.env_code}-prv-001"
+  egress_vpc_name = "${local.cloud_code}-${local.region_code}-vpc-${local.app_code}-${local.env_code}-plb-001"
+
   tags = {
     ManagedBy = "Terraform"
     Project   = "LandingZone"
@@ -28,7 +36,7 @@ locals {
 module "transit_gateway" {
   source = "../../../modules/network/transit-gateway"
 
-  name = "landing-zone-tgw"
+  name = local.tgw_name
 
   ram_principal_account_ids = local.ram_principal_account_ids
 
@@ -38,7 +46,7 @@ module "transit_gateway" {
 module "egress_vpc" {
   source = "../../../modules/network/egress-vpc"
 
-  name                = "landing-zone-egress"
+  name                = local.egress_vpc_name
   vpc_cidr            = var.network_vpc_cidr
   azs                 = var.azs
   public_subnet_cidrs = var.egress_public_subnet_cidrs

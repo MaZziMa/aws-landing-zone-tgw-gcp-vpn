@@ -10,6 +10,8 @@ This environment records the AWS Network account to GCP HA VPN design:
 - AWS TGW VPN route table association and propagation into selected workload TGW route tables
 - GCP firewall rule allowing test traffic from explicit AWS CIDR ranges
 
+Default naming follows `<cloud>-<region>-<type>-<app>-<env>-<zone>-<inst>`, for example `gcp-usc1-havpn-net-shared-prv-001`.
+
 ## Why four tunnels
 
 AWS creates two tunnels for every Site-to-Site VPN connection. GCP HA VPN has two gateway interfaces. This config creates two AWS VPN connections, one per GCP interface, and uses all four AWS tunnels.
@@ -102,6 +104,8 @@ Run the `network` stack first so it creates and outputs `vpn_route_table_id`. De
 
 Customer Gateway public IPs are not input variables. Terraform reads them from `google_compute_ha_vpn_gateway.this.vpn_interfaces` so AWS always points at the GCP HA VPN gateway created in this stack.
 
+GCP resource names are effectively immutable. Apply naming changes during a clean redeploy or a planned maintenance window.
+
 Use explicit CIDRs for AWS-to-GCP firewall source ranges:
 
 ```hcl
@@ -121,19 +125,19 @@ If these resources were created manually in the consoles, write matching values 
 Example import commands:
 
 ```bash
-terraform import google_compute_ha_vpn_gateway.this projects/<PROJECT_ID>/regions/us-central1/vpnGateways/gcp-to-aws-ha-vpn
-terraform import google_compute_router.this projects/<PROJECT_ID>/regions/us-central1/routers/cr-gcp-to-aws
-terraform import google_compute_external_vpn_gateway.aws projects/<PROJECT_ID>/global/externalVpnGateways/aws-peer-gateway
+terraform import google_compute_ha_vpn_gateway.this projects/<PROJECT_ID>/regions/us-central1/vpnGateways/gcp-usc1-havpn-net-shared-prv-001
+terraform import google_compute_router.this projects/<PROJECT_ID>/regions/us-central1/routers/gcp-usc1-cr-net-shared-prv-001
+terraform import google_compute_external_vpn_gateway.aws projects/<PROJECT_ID>/global/externalVpnGateways/gcp-usc1-extvpngw-net-shared-prv-001
 
 terraform import aws_customer_gateway.gcp_if0 cgw-xxxxxxxxxxxxxxxxx
 terraform import aws_customer_gateway.gcp_if1 cgw-yyyyyyyyyyyyyyyyy
 terraform import aws_vpn_connection.if0 vpn-xxxxxxxxxxxxxxxxx
 terraform import aws_vpn_connection.if1 vpn-yyyyyyyyyyyyyyyyy
 
-terraform import google_compute_vpn_tunnel.this["if0_tunnel1"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-to-aws-ha-if0-tunnel1
-terraform import google_compute_vpn_tunnel.this["if0_tunnel2"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-to-aws-ha-if0-tunnel2
-terraform import google_compute_vpn_tunnel.this["if1_tunnel1"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-to-aws-ha-if1-tunnel1
-terraform import google_compute_vpn_tunnel.this["if1_tunnel2"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-to-aws-ha-if1-tunnel2
+terraform import google_compute_vpn_tunnel.this["if0_tunnel1"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-usc1-vpntun-net-shared-prv-001
+terraform import google_compute_vpn_tunnel.this["if0_tunnel2"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-usc1-vpntun-net-shared-prv-002
+terraform import google_compute_vpn_tunnel.this["if1_tunnel1"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-usc1-vpntun-net-shared-prv-003
+terraform import google_compute_vpn_tunnel.this["if1_tunnel2"] projects/<PROJECT_ID>/regions/us-central1/vpnTunnels/gcp-usc1-vpntun-net-shared-prv-004
 ```
 
 After importing, run `terraform plan` and adjust config until Terraform shows no unexpected replacement. VPN resources are sensitive to tunnel ordering, PSKs, and BGP inside IPs, so review any planned replacement carefully.
